@@ -9,6 +9,10 @@ import TheWelcome from './components/TheWelcome.vue'
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
+      <p class="description">
+        Stocky is a personal health tracking app that helps you monitor your daily health
+        metrics, build healthy habits, and stay on top of your well-being.
+      </p>
     </div>
   </header>
 
@@ -40,8 +44,8 @@ header {
 
   header .wrapper {
     display: flex;
+    flex-direction: column;
     place-items: flex-start;
-    flex-wrap: wrap;
   }
 }
 </style>
