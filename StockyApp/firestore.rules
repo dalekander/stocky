@@ -1,0 +1,50 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function isValidFood(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.calories is number && data.calories >= 0 && data.calories <= 100000
+        && data.servingLabel is string && data.servingLabel.size() <= 50;
+    }
+
+    function isValidEntry(data) {
+      return data.meal in ['breakfast', 'lunch', 'dinner', 'snack']
+        && data.date is string && data.date.size() == 10
+        && data.foodName is string && data.foodName.size() > 0 && data.foodName.size() <= 100
+        && data.servings is number && data.servings > 0
+        && data.caloriesPerServing is number && data.caloriesPerServing >= 0
+        && data.totalCalories is number && data.totalCalories >= 0;
+    }
+
+    function isValidProfile(data) {
+      return data.gender in ['male', 'female']
+        && data.age is number && data.age >= 18 && data.age <= 100
+        && data.heightIn is number && data.heightIn >= 48 && data.heightIn <= 96
+        && data.weightLb is number && data.weightLb >= 66 && data.weightLb <= 660
+        && data.activityLevel in ['sedentary', 'light', 'moderate', 'active']
+        && data.goalRateLb is number && data.goalRateLb >= -2 && data.goalRateLb <= 2
+        && data.calorieTarget is number && data.calorieTarget >= 1000 && data.calorieTarget <= 10000;
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid) && isValidProfile(request.resource.data);
+    }
+
+    match /users/{uid}/foods/{foodId} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid) && isValidFood(request.resource.data);
+    }
+
+    match /users/{uid}/entries/{entryId} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid) && isValidEntry(request.resource.data);
+    }
+  }
+}

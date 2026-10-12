@@ -1,51 +1,19 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { isFirebaseConfigured } from '@/services/firebase'
+import AppLayout from '@/layouts/AppLayout.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
+import FirebaseSetupNotice from '@/components/auth/FirebaseSetupNotice.vue'
+
+const route = useRoute()
+const layouts = { auth: AuthLayout, app: AppLayout }
+const layout = computed(() => layouts[route.meta.layout] ?? AppLayout)
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-      <p class="description">
-        Stocky is a personal health tracking app that helps you monitor your daily health
-        metrics, build healthy habits, and stay on top of your well-being.
-      </p>
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <FirebaseSetupNotice v-if="!isFirebaseConfigured" />
+  <component :is="layout" v-else>
+    <RouterView />
+  </component>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    flex-direction: column;
-    place-items: flex-start;
-  }
-}
-</style>
