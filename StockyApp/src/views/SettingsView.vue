@@ -33,7 +33,7 @@ const openDay = (date) => router.push({ name: ROUTES.DIARY, query: { date } })
         @click="router.push({ name: ROUTES.ONBOARDING })"
       >
         Update my plan
-      </BaseButton>
+      
     </section>
 
     <WeekSummary @select="openDay" />
